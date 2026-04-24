@@ -1,24 +1,31 @@
 # .github/workflows/sast.yml
 name: SAST with Semgrep
 
-on: [push, pull_request]   # runs on every push
+on: [push, pull_request]
 
 jobs:
   semgrep:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout code                    # ✅ updated v3 → v4
+        uses: actions/checkout@v4
 
-      - name: Run Semgrep SAST scan
-        uses: semgrep/semgrep-action@v1
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          config: p/python   # Python security ruleset
-          generateSarif: "1"
+          python-version: '3.11'
 
-      - name: Upload results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+      - name: Install Semgrep                  # ✅ install directly, no token needed
+        run: pip install semgrep
+
+      - name: Run Semgrep scan                 # ✅ runs as a command, not action
+        run: semgrep scan --config=p/python --error .
+        # --error means: exit 1 if any finding (blocks pipeline)
+
+      - name: Upload SARIF to GitHub Security
         if: always()
+        uses: github/codeql-action/upload-sarif@v3  # ✅ v2 → v3
         with:
           sarif_file: semgrep.sarif
+        continue-on-error: true
