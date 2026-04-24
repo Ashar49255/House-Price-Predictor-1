@@ -13,7 +13,7 @@ def predict():
     feature=[int(x) for x in request.form.values()]
     feature_final=np.array(feature).reshape(-1,1)
     prediction=model.predict(feature_final)
-    return render_template('index.html',prediction_text='Price of House will be Rs. {}'.format(int(prediction)))
+    return render_template('index.html',prediction_text='Price of House will be Rs. {}'.format(int(prediction[0][0])))
 
 if(__name__=='__main__'):
     app.run(debug=True)
