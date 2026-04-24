@@ -1,7 +1,10 @@
-# .github/workflows/sast.yml
 name: SAST with Semgrep
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ master ]   # ya main (jo bhi tumhari default branch hai)
+  pull_request:
+    branches: [ master ]
 
 jobs:
   semgrep:
